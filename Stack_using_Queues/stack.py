@@ -1,4 +1,18 @@
-from queue import Queue
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        return self.items.pop(0)
+
+    def size(self):
+        return len(self.items)
+
+    def is_empty(self):
+        return len(self.items) == 0
 
 
 class MyStack(object):
@@ -11,36 +25,36 @@ class MyStack(object):
         :type x: int
         :rtype: None
         """
-        self.q1.put(x)
+        self.q1.push(x)
 
     def pop(self):
         """
         :rtype: int
         """
-        for i in range(self.q1.qsize() - 1):
-            self.q2.put(self.q1.get())
-        res = self.q1.get()
-        for i in range(self.q2.qsize()):
-            self.q1.put(self.q2.get())
+        for _ in range(self.q1.size() - 1):
+            self.q2.push(self.q1.pop())
+        res = self.q1.pop()
+        for _ in range(self.q2.size()):
+            self.q1.push(self.q2.pop())
         return res
 
     def top(self):
         """
         :rtype: int
         """
-        for i in range(self.q1.qsize() - 1):
-            self.q2.put(self.q1.get())
-        res = self.q1.get()
-        for i in range(self.q2.qsize()):
-            self.q1.put(self.q2.get())
-        self.q1.put(res)
+        for _ in range(self.q1.size() - 1):
+            self.q2.push(self.q1.pop())
+        res = self.q1.pop()
+        for _ in range(self.q2.size()):
+            self.q1.push(self.q2.pop())
+        self.q1.push(res)
         return res
 
     def empty(self):
         """
         :rtype: bool
         """
-        return self.q1.empty() and self.q2.empty()
+        return self.q1.is_empty() and self.q2.is_empty()
 
 
 # Your MyStack object will be instantiated and called as such:
