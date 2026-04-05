@@ -1,18 +1,70 @@
+class Node:
+    def __init__(self, data=None, next=None):
+        self.data = data
+        self.next = next
+
+
 class Queue:
     def __init__(self):
-        self.items = []
+        self.items = None
 
     def push(self, item):
-        self.items.append(item)
+        self.items = Node(item, self.items)
 
     def pop(self):
-        return self.items.pop(0)
+        if self.items is None:
+            raise IndexError("pop from empty queue")
+
+        node = self.items
+        if node.next is None:
+            self.items = None
+            return node.data
+        if node.next.next is None:
+            res = node.next.data
+            self.items.next = None
+            return res
+
+        while node.next.next is not None:
+            node = node.next
+        res = node.next.data
+        node.next = None
+        return res
 
     def size(self):
-        return len(self.items)
+        k = 0
+        node = self.items
+        while node is not None:
+            node = node.next
+            k += 1
+        return k
 
     def is_empty(self):
-        return len(self.items) == 0
+        return self.size() == 0
+
+
+# def test_queue():
+#     q = Queue()
+#     q.push(1)
+#     q.push(2)
+#     q.push(3)
+#     assert q.pop() == 1
+#     assert q.pop() == 2
+#     assert q.pop() == 3
+#     try:
+#         q.pop()
+#     except IndexError:
+#         pass
+#     else:
+#         assert False, "Expected IndexError"
+
+#     assert q.size() == 0
+#     assert q.is_empty()
+#     q.push(4)
+#     assert q.size() == 1
+#     assert not q.is_empty()
+
+
+# test_queue()
 
 
 class MyStack(object):
