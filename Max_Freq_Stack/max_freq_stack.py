@@ -6,42 +6,43 @@ class Node:
 
 class FreqStack(object):
     def __init__(self):
-        self.items = None
         self.freq = {}
+        self.group = {}
+        self.maxfreq = 0
 
     def push(self, val):
         """
         :type val: int
         :rtype: None
         """
-        self.items = Node(val, self.items)
         self.freq[val] = self.freq.get(val, 0) + 1
+        if self.freq[val] > self.maxfreq:
+            self.maxfreq = self.freq[val]
+
+        head = self.group.get(self.freq[val], None)
+        self.group[self.freq[val]] = Node(val, head)
 
     def pop(self):
         """
         :rtype: int
         """
-        try:
-            if self.items.next is None:
-                res = self.items.val
-                self.items = None
-                self.freq[res] = self.freq.get(res, 0) - 1
-                return res
-        except AttributeError:
+        if self.maxfreq == 0:
             raise IndexError("pop from empty stack")
-        node = self.items
-        max_freq = max(self.freq.values())
-        maxes = [k for k, v in self.freq.items() if v == max_freq]
-        if node.val not in maxes:
-            while node.next.val not in maxes:
-                node = node.next
-            res = node.next.val
-            node.next = node.next.next
+
+        head = self.group[self.maxfreq]
+        val = head.val
+        self.group[self.maxfreq] = head.next
+
+        new_freq = self.freq[val] - 1
+        if new_freq == 0:
+            del self.freq[val]
         else:
-            res = node.val
-            self.items = node.next
-        self.freq[res] -= 1
-        return res
+            self.freq[val] = new_freq
+
+        if self.group[self.maxfreq] is None:
+            del self.group[self.maxfreq]
+            self.maxfreq -= 1
+        return val
 
 
 # Your FreqStack object will be instantiated and called as such:
@@ -71,10 +72,11 @@ class FreqStack(object):
 #     assert s.pop() == 1  # 2 -> 3 -> 9 -> 0 -> 4 -> None
 #     s.push(4)  # 4 -> 2 -> 3 -> 9 -> 0 -> 4 -> None
 #     assert s.pop() == 4  # 2 -> 3 -> 9 -> 0 -> 4 -> None
-#     assert s.pop() == 3  # 2 -> 9 -> 0 -> 4 -> None
-#     assert s.pop() == 9
-#     assert s.pop() == 0
-#     assert s.pop() == 4
+#     assert s.pop() == 2  # 3 -> 9 -> 0 -> 4 -> None
+#     assert s.pop() == 3  # 9 -> 0 -> 4 -> None
+#     assert s.pop() == 9 # 0 -> 4 -> None
+#     assert s.pop() == 0 # 4 -> None
+#     assert s.pop() == 4 # None
 
 
 # test()
